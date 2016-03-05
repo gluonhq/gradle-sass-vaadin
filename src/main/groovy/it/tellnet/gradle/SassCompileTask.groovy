@@ -27,7 +27,7 @@ class SassCompileTask extends DefaultTask {
             scss.outDir = f
             scss.minify = ext.minify
             scss.silent = ext.silenceErrors
-            scss.setCharSet = ext.setCharSet
+            scss.javafx = ext.javafx
             scss.exec()
         }
     }

@@ -12,7 +12,7 @@ class SassCompilerImpl {
     ProjectAwareResolver resolver
     Boolean minify = false
     Boolean silent = false
-    Boolean setCharSet = true
+    Boolean javafx = false
 
 
     def exec(){
@@ -26,15 +26,19 @@ class SassCompilerImpl {
 
         // setting charset breaks JavaFX CSS generation
         // and should be turned off for JavaFX applications
-        if ( setCharSet ) {
+        if ( !javafx ) {
             sass.setCharset('UTF-8')
         }
         sass.addResolver(resolver.getFSResolver())
         sass.addResolver(resolver)
         def basename = scss.getName().replaceAll('\\.scss','.css')
         sass.compile()
-        new File(outDir.getAbsolutePath() + File.separator + basename).withWriter {
+        File file = new File(outDir.getAbsolutePath() + File.separator + basename)
+        file.withWriter {
             sass.write(it, minify)
+        }
+        if (javafx) {
+            file.write( file.text.replaceAll(':\\s*nil\\s*;', ': null;') )
         }
     }
 
