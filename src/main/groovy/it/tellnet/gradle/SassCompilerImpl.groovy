@@ -3,6 +3,9 @@ package it.tellnet.gradle
 import com.vaadin.sass.internal.ScssStylesheet
 import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl
 import com.vaadin.sass.internal.handler.SCSSErrorHandler
+
+import static it.tellnet.gradle.JavaFXTools.*
+
 /**
  * @author Radu Andries
  */
@@ -18,18 +21,16 @@ class SassCompilerImpl {
     def exec(){
         SCSSErrorHandler handler = silent? new SilentErrorHandler(): new SCSSErrorHandler()
 
-        final def fakeValue = "gluon-null"
-
         def sourceScss = scss
 
-        if ( javafx ) {
-            // create tempFile to preserve the original scss
-            sourceScss = new File('tmp_' + scss.getName())
-            sourceScss << scss.text
-
-            // Replace all null values with fake ones
-            sourceScss.write( sourceScss.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
-        }
+//        if ( javafx ) {
+//            // create tempFile to preserve the original scss
+//            sourceScss = new File('tmp_' + scss.getName())
+//            sourceScss << scss.text
+//
+//            // Replace all null values with fake ones
+//            sourceScss.write( sourceScss.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
+//        }
 
         ScssStylesheet sass = ScssStylesheet.get(sourceScss.absolutePath, null, new SCSSDocumentHandlerImpl(),handler)
         sass.setFile(sourceScss)
@@ -38,8 +39,8 @@ class SassCompilerImpl {
         // and should be turned off for JavaFX applications
         if ( !javafx ) {
             sass.setCharset('UTF-8')
-
         }
+
         sass.addResolver(resolver.getFSResolver())
         sass.addResolver(resolver)
         def basename = scss.getName().replaceAll('\\.scss','.css')
@@ -53,7 +54,7 @@ class SassCompilerImpl {
         if (javafx) {
             // replace all fakeValues with nulls as it supposed to be
             file.write( file.text.replaceAll(":\\s*$fakeValue\\s*;", ': null;') )
-            sourceScss.delete() // delete temp file created only in javafx mode
+//            sourceScss.delete() // delete temp file created only in javafx mode
         }
     }
 

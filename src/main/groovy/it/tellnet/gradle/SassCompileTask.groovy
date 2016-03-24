@@ -3,19 +3,41 @@ package it.tellnet.gradle
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
+import static it.tellnet.gradle.JavaFXTools.getFakeValue
 /**
  * @author Radu Andries
  */
 class SassCompileTask extends DefaultTask {
 
-
     @TaskAction
     def compileAllCss(){
         SassPluginExtension ext = project.getExtensions().getByName('sass') as SassPluginExtension;
-        def tree = project.fileTree(dir: ext.sassDir, include: '**/*.scss')
+
+        def sassFolder = ext.sassDir
+        if ( ext.javafx) {
+
+            // copy scss folder for preprocessing
+
+            File tempDir = new File(getTemporaryDir(), UUID.randomUUID().toString())
+            tempDir.deleteOnExit()
+            tempDir.mkdirs()
+
+            def tree = project.fileTree(dir: ext.sassDir, include: '**/*.scss')
+            tree.each {
+                File xit = new File(tempDir, it.getName())
+                xit << it.text
+                xit.write( xit.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
+            }
+
+            sassFolder = tempDir
+
+        }
+
+        def tree = project.fileTree(dir: sassFolder, include: '**/*.scss')
         def resolv = new ProjectAwareResolver(project)
         File f = project.file(ext.cssDir)
         f.mkdirs()
+
         tree.each {
             if(it.name.startsWith('_')){
                 //We should ignore this file.
