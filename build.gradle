@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'it.tellnet'
-version '1.3-gluon-build5'
+version '1.3-gluon-build6-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
