@@ -10,14 +10,16 @@ You should clone this repository locally and install the jar in the local maven 
         
 In your build.gradle add the following at the start of the script:
 
-        buildscript {
-            repositories {
-                mavenLocal()
-            }
-            dependencies {
-                classpath "com.gluonhq:gradle-sass:+"
-            }
-        }
+```groovy
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.gluonhq:gradle-sass:+"
+    }
+}
+```
         
 Proceed to configure the plugin.
 
@@ -29,15 +31,18 @@ This plugin supports webjars. There are 2 additional configurations added to the
  
 Example:
 
+```groovy
         sassRuntime 'org.webjars.npm:github-com-mrkelly-lato:0.3.0'
         sassRuntime 'org.webjars.bower:open-iconic:1.1.1'
- 
+``` 
+
 These configurations just resolve dependencies and add them to the search path for scss files.
 Thus it is possible to add webjars like bootstrap-sass to dependencies. In order to add sassRuntime
 deps to java runtime deps use the following snippet
 
-        configurations.runtime.extendsFrom configurations.sassRuntime
-
+```groovy
+configurations.runtime.extendsFrom configurations.sassRuntime
+```groovy
 
 
 ## Defined Tasks
@@ -53,24 +58,30 @@ There are 3 tasks defined:
 
 To configure this plugin you can declare a block as follows:
 
-    sass {
-        //The input directory
-        sassDir = 'src/main/sass' //default value
-        //The output directory
-        cssDir = 'build/sass' //default value
-        //Minify output css
-        minify = false //default value
-        //Vaadin sass compiler is pretty verbose about errors
-        silenceErrors = false //default value
-        // Ability to turn off charset setting (helpful for JavaFX css generation)
-        // Will replace all 'nil' attribute values with 'null'
-        javafx = false // default value 
-        
-        /*
-        //You can add scan directories to look for SCSS files in the JARs
-        //Search in dep jars looks for these directories
-        searchDirectories '/META-INF/resources/webjars/open-iconic/1.1.1/font/css/',
-                          '/META-INF/resources/webjars/github-com-mrkelly-lato/0.3.0/scss/'
-        */
-        
-    }
+```groovy
+sass {
+//The input directory
+sassDir = 'src/main/sass' //default value
+
+//The output directory
+cssDir = 'build/sass' //default value
+
+//Minify output css
+minify = false //default value
+
+//Vaadin sass compiler is pretty verbose about errors
+silenceErrors = false //default value
+
+// Ability to turn off charset setting (helpful for JavaFX css generation)
+// Will replace all 'nil' attribute values with 'null'
+javafx = false // default value 
+
+/*
+//You can add scan directories to look for SCSS files in the JARs
+//Search in dep jars looks for these directories
+searchDirectories '/META-INF/resources/webjars/open-iconic/1.1.1/font/css/',
+                  '/META-INF/resources/webjars/github-com-mrkelly-lato/0.3.0/scss/'
+*/
+
+}
+ ```   
