@@ -35,8 +35,8 @@ publishing {
     repositories {
         maven {
            def repositoryUrl = project.hasProperty('repositoryUrl') ? project.getProperty('repositoryUrl') : 'https://oss.sonatype.org/content/repositories/snapshots/'
-           def repositoryUsername = project.hasProperty('repositoryUsername') ? project.getProperty('repositoryUsername') :  project.getProperty('gluonNexusUsername')
-           def repositoryPassword = project.hasProperty('repositoryPassword') ? project.getProperty('repositoryPassword') :  project.getProperty('gluonNexusPassword')
+           def repositoryUsername = project.hasProperty('repositoryUsername') ? project.getProperty('sonatypeUsername') :  project.getProperty('gluonNexusUsername')
+           def repositoryPassword = project.hasProperty('repositoryPassword') ? project.getProperty('sonatypePassword') :  project.getProperty('gluonNexusPassword')
 
            url repositoryUrl
            credentials {
