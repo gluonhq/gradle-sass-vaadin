@@ -1,9 +1,9 @@
-package it.tellnet.gradle
+package com.gluonhq.gradle
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-import static it.tellnet.gradle.JavaFXTools.getFakeValue
+import static com.gluonhq.gradle.JavaFXTools.getFakeValue
 /**
  * @author Radu Andries
  */

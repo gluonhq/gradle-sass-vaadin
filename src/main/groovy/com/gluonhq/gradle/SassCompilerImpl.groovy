@@ -1,10 +1,10 @@
-package it.tellnet.gradle
+package com.gluonhq.gradle
 
 import com.vaadin.sass.internal.ScssStylesheet
 import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl
 import com.vaadin.sass.internal.handler.SCSSErrorHandler
 
-import static it.tellnet.gradle.JavaFXTools.*
+import static com.gluonhq.gradle.JavaFXTools.*
 
 /**
  * @author Radu Andries

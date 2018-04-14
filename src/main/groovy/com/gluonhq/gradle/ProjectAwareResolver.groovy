@@ -1,4 +1,4 @@
-package it.tellnet.gradle
+package com.gluonhq.gradle
 
 import com.google.common.cache.LoadingCache
 import com.vaadin.sass.internal.ScssStylesheet

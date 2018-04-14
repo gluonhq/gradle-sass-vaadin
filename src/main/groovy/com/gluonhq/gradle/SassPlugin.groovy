@@ -1,4 +1,4 @@
-package it.tellnet.gradle
+package com.gluonhq.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

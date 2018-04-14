@@ -15,7 +15,7 @@ In your build.gradle add the following at the start of the script:
                 mavenLocal()
             }
             dependencies {
-                classpath "it.tellnet:gradle-sass:+"
+                classpath "com.gluonhq:gradle-sass:+"
             }
         }
         

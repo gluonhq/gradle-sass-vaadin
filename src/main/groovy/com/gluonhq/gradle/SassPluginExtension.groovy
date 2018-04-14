@@ -1,4 +1,4 @@
-package it.tellnet.gradle
+package com.gluonhq.gradle
 
 /**
  * @author Radu Andries
