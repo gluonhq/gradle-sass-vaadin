@@ -42,7 +42,7 @@ deps to java runtime deps use the following snippet
 
 ```groovy
 configurations.runtime.extendsFrom configurations.sassRuntime
-```groovy
+```
 
 
 ## Defined Tasks
@@ -60,28 +60,28 @@ To configure this plugin you can declare a block as follows:
 
 ```groovy
 sass {
-//The input directory
-sassDir = 'src/main/sass' //default value
+        //The input directory
+        sassDir = 'src/main/sass' //default value
 
-//The output directory
-cssDir = 'build/sass' //default value
+        //The output directory
+        cssDir = 'build/sass' //default value
 
-//Minify output css
-minify = false //default value
+        //Minify output css
+        minify = false //default value
 
-//Vaadin sass compiler is pretty verbose about errors
-silenceErrors = false //default value
+        //Vaadin sass compiler is pretty verbose about errors
+        silenceErrors = false //default value
 
-// Ability to turn off charset setting (helpful for JavaFX css generation)
-// Will replace all 'nil' attribute values with 'null'
-javafx = false // default value 
+        // Ability to turn off charset setting (helpful for JavaFX css generation)
+        // Will replace all 'nil' attribute values with 'null'
+        javafx = false // default value 
 
-/*
-//You can add scan directories to look for SCSS files in the JARs
-//Search in dep jars looks for these directories
-searchDirectories '/META-INF/resources/webjars/open-iconic/1.1.1/font/css/',
-                  '/META-INF/resources/webjars/github-com-mrkelly-lato/0.3.0/scss/'
-*/
+        /*
+        //You can add scan directories to look for SCSS files in the JARs
+        //Search in dep jars looks for these directories
+        searchDirectories '/META-INF/resources/webjars/open-iconic/1.1.1/font/css/',
+                          '/META-INF/resources/webjars/github-com-mrkelly-lato/0.3.0/scss/'
+        */
 
 }
  ```   
