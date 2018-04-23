@@ -10,7 +10,8 @@ import static com.gluonhq.gradle.JavaFXTools.*
  * @author Radu Andries
  */
 class SassCompilerImpl {
-    File scss
+    File scssFile
+    File scssDir
     File outDir
     ProjectAwareResolver resolver
     Boolean minify = false
@@ -21,16 +22,7 @@ class SassCompilerImpl {
     def exec(){
         SCSSErrorHandler handler = silent? new SilentErrorHandler(): new SCSSErrorHandler()
 
-        def sourceScss = scss
-
-//        if ( javafx ) {
-//            // create tempFile to preserve the original scss
-//            sourceScss = new File('tmp_' + scss.getName())
-//            sourceScss << scss.text
-//
-//            // Replace all null values with fake ones
-//            sourceScss.write( sourceScss.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
-//        }
+        def sourceScss = scssFile
 
         ScssStylesheet sass = ScssStylesheet.get(sourceScss.absolutePath, null, new SCSSDocumentHandlerImpl(),handler)
         sass.setFile(sourceScss)
@@ -43,10 +35,15 @@ class SassCompilerImpl {
 
         sass.addResolver(resolver.getFSResolver())
         sass.addResolver(resolver)
-        def basename = scss.getName().replaceAll('\\.scss','.css')
         sass.compile()
 
-        File file = new File(outDir.getAbsolutePath() + File.separator + basename)
+        def cssFileName = scssFile.getAbsolutePath()
+                                  .replaceAll('\\.scss','.css')
+                                  .replaceFirst( scssDir.getAbsolutePath(), outDir.getAbsolutePath())
+
+
+        File file = new File(cssFileName)
+        file.getParentFile().mkdirs()
         file.withWriter {
             sass.write(it, minify)
         }
@@ -54,7 +51,6 @@ class SassCompilerImpl {
         if (javafx) {
             // replace all fakeValues with nulls as it supposed to be
             file.write( file.text.replaceAll(":\\s*$fakeValue\\s*;", ': null;') )
-//            sourceScss.delete() // delete temp file created only in javafx mode
         }
     }
 
