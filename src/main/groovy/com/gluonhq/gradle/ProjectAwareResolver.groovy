@@ -1,6 +1,5 @@
 package com.gluonhq.gradle
 
-import com.google.common.cache.LoadingCache
 import com.vaadin.sass.internal.ScssStylesheet
 import com.vaadin.sass.internal.resolver.FilesystemResolver
 import com.vaadin.sass.internal.resolver.ScssStylesheetResolver

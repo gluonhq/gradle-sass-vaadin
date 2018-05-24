@@ -16,20 +16,23 @@ class SassCompileTask extends DefaultTask {
         def sassFolder = ext.sassDir
         if ( ext.javafx) {
 
-            // copy scss folder for preprocessing
+            // copy scssFile folder for preprocessing
 
             File tempDir = new File(getTemporaryDir(), UUID.randomUUID().toString())
             tempDir.deleteOnExit()
-            tempDir.mkdirs()
 
-            def tree = project.fileTree(dir: ext.sassDir, include: '**/*.scss')
+            def sTempDir = tempDir.getAbsolutePath()
+            def sSassDir = new File(ext.sassDir).getCanonicalPath()
+
+            def tree = project.fileTree(dir: sSassDir, include: '**/*.scss')
             tree.each {
-                File xit = new File(tempDir, it.getName())
-                xit << it.text
-                xit.write( xit.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
+                File tempFile = new File( it.getCanonicalPath().replaceFirst( sSassDir, sTempDir ) )
+                tempFile.getParentFile().mkdirs()
+                tempFile << it.text
+                tempFile.write( tempFile.text.replaceAll(':\\s*null\\s*;', ": $fakeValue;") )
             }
 
-            sassFolder = tempDir
+            sassFolder = sTempDir
 
         }
 
@@ -39,13 +42,15 @@ class SassCompileTask extends DefaultTask {
         f.mkdirs()
 
         tree.each {
+
             if(it.name.startsWith('_')){
                 //We should ignore this file.
                 return
             }
             def scss = new SassCompilerImpl()
             scss.resolver = resolv
-            scss.scss = it
+            scss.scssFile = it
+            scss.scssDir = new File(sassFolder)
             scss.outDir = f
             scss.minify = ext.minify
             scss.silent = ext.silenceErrors
