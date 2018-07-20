@@ -15,6 +15,8 @@ version '1.4-SNAPSHOT'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: "com.gradle.plugin-publish"
+apply plugin: "signing"
+
 
 repositories {
     mavenCentral()
@@ -26,10 +28,62 @@ dependencies {
     compile 'com.vaadin:vaadin-sass-compiler:0.9.13'
 }
 
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            customizePom(pom)
+            groupId 'com.gluonhq'
+            artifactId 'gradle-sass'
+
             from components.java
+
+            // create the sign pom artifact
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }
+
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            // create the signed artifacts
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
         }
     }
     repositories {
@@ -47,16 +101,63 @@ publishing {
     }
 }
 
-pluginBundle {
-  website = 'https://github.com/gluonhq/gradle-sass'
-  vcsUrl = 'https://github.com/gluonhq/gradle-sass'
-  description = 'Gradle Sass Plugin'
-  tags = ['scss', 'sass', 'vaadin-sass']
+signing {
+    sign configurations.archives
+}
 
-  plugins {
-    greetingsPlugin {
-      id = 'com.gluonhq.gradle-sass'
-      displayName = 'Gradle Sass Plugin'
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
+
+        // eliminate test-scoped dependencies (no need in maven central POMs)
+        root.dependencies.removeAll { dep ->
+            dep.scope == "test"
+        }
+
+        // add all items necessary for maven central publication
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
+
+            description 'Gradle Sass Plugin'
+            name 'gradle-sass'
+            url 'https://github.com/gluonhq/gradle-sass'
+            organization {
+                name 'com.gluonhq'
+                url 'https://github.com/gluonhq'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/gluonhq/gradle-sass/issues'
+            }
+            licenses {
+                license {
+                    name 'Apache License 2.0'
+                    url 'https://github.com/gluonhq/gradle-sass/blob/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                url 'https://github.com/gluonhq/gradle-sass'
+                connection 'scm:git:git://github.com/gluonhq/gradle-sass.git'
+                developerConnection 'scm:git:ssh://git@github.com:gluonhq/gradle-sass'
+            }
+            developers {
+                developer {
+                    name 'Gluon'
+                }
+            }
+        }
     }
-  }
+}
+
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
+    }
 }
