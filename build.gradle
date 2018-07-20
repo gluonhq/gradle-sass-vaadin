@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'com.gluonhq'
-version '1.4-SNAPSHOT'
+version '1.3'
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
